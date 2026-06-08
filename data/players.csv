@@ -1,0 +1,9 @@
+player_id,team_id,first_name,last_name,position,height_inches,weight_lbs
+101,1,Jayson,Tatum,F,80,210
+102,1,Jaylen,Brown,G/F,78,223
+201,2,LeBron,James,F,81,250
+202,2,Anthony,Davis,F/C,82,253
+301,3,Nikola,Jokic,C,83,284
+302,3,Jamal,Murray,G,76,215
+401,4,Giannis,Antetokounmpo,F,83,243
+402,4,Damian,Lillard,G,74,195
