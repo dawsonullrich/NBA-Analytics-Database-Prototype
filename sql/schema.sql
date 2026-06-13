@@ -89,6 +89,7 @@ CREATE TABLE advanced_player_metrics (
 CREATE INDEX idx_players_team ON players(team_id);
 CREATE INDEX idx_games_date ON games(game_date);
 CREATE INDEX idx_player_stats ON player_game_stats(player_id, game_id);
+CREATE INDEX idx_stats_points ON player_game_stats(points DESC);
 CREATE INDEX idx_injuries_status ON injuries(status, report_date);
 CREATE INDEX idx_offensive_rating
     ON advanced_player_metrics(offensive_rating DESC);

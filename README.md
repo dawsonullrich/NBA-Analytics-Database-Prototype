@@ -31,7 +31,7 @@ The prototype includes:
 - injury reports
 - advanced player metrics
 
-The main notebook creates the database, loads the CSV files, runs analytical queries, and creates a few charts.
+The main notebook creates the database, loads the CSV files, runs analytical queries, creates charts, calculates descriptive statistics and correlations, and records a query-performance baseline.
 
 ---
 
@@ -140,5 +140,9 @@ The project includes queries for:
 - current injury reports
 - game results and winners
 - advanced metric leaders
+- descriptive statistics for player-game data
+- player averages and scoring consistency
+- correlations between minutes, points, rebounds, assists, and turnovers
+- an SQLite query plan and repeated timing test for an indexed query
 
-For the full project, the sample CSV files can be replaced with a larger data set from an NBA API or another NBA data source.
+For the full project, the sample CSV files can be replaced with a larger data set from an NBA API or another NBA data source. The same performance test can then be repeated to measure how the indexes behave as the tables grow.
