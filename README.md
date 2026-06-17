@@ -13,6 +13,7 @@ The project can run in two ways. The CSV version uses a small sample data set so
 - [Installation](#installation)
 - [Project Structure](#project-structure)
 - [How to Run](#how-to-run)
+- [Testing](#testing)
 - [Database Tables](#database-tables)
 - [Queries Included](#queries-included)
 
@@ -20,7 +21,11 @@ The project can run in two ways. The CSV version uses a small sample data set so
 
 ## Project Overview
 
-NBA data can be spread across game logs, player box scores, injury reports, and advanced statistics. The goal of this project is to keep that information in one relational database and use SQL queries to compare player and team performance.
+NBA data can be spread across game logs, player box scores, injury reports, roster pages, and advanced statistics. Each source is useful by itself, but the data becomes more valuable when it can be connected. For example, a player performance question may need the player's team, the game result, the player's box-score line, and an advanced efficiency metric all at the same time.
+
+The problem this project addresses is that separated data makes analysis slower and less reliable. If the information is copied into one large spreadsheet, repeated team and player data can become inconsistent. If the information stays in separate files, every analysis requires extra manual work. A relational database is a better fit because teams, players, games, injuries, and performance metrics can be stored in separate tables while still being connected through keys.
+
+This project is important because sports analytics depends on asking questions across several types of data. A database can answer questions such as which players had the strongest scoring games, which teams are more efficient, which players are listed on the injury report, and which advanced metrics point to the most efficient players. The same framework can also grow from a small prototype into a larger NBA data system.
 
 The prototype includes:
 
@@ -93,6 +98,8 @@ NBA-Analytics-Database/
 |-- benchmark_framework.py
 |-- database_setup.py
 |-- requirements.txt
+|-- tests/
+|   `-- test_database_framework.py
 `-- README.md
 ```
 
@@ -156,6 +163,26 @@ This times separate parts of the project:
 - foreign-key validation
 
 This is more useful for the current project size because it shows which parts of the framework are being measured and can be repeated later with API-loaded data.
+
+---
+
+## Testing
+
+The test suite checks the main database framework pieces:
+
+- CSV files load the expected number of rows
+- foreign-key relationships are valid
+- expected indexes exist
+- SQL reports return correct and sorted results
+- the injury report filters available players
+- the points index is used for the top-scoring query
+- the individual framework benchmark returns the expected benchmark sections
+
+Run the tests with:
+
+```bash
+python -m unittest discover -s tests -v
+```
 
 ---
 
