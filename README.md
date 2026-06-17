@@ -82,11 +82,15 @@ NBA-Analytics-Database/
 |-- notebooks/
 |   `-- NBA_Analytics_Database.ipynb
 |
+|-- docs/
+|   `-- performance_summary.md
+|
 |-- sql/
 |   |-- schema.sql
 |   `-- analytics_queries.sql
 |
 |-- api_import.py
+|-- benchmark_framework.py
 |-- database_setup.py
 |-- requirements.txt
 `-- README.md
@@ -134,6 +138,25 @@ jupyter notebook
 
 Open `notebooks/NBA_Analytics_Database.ipynb` and run the cells in order.
 
+### Option 4 - Benchmark Individual Framework Parts
+
+The intermediate project feedback suggested evaluating the performance of individual parts of the framework instead of trying to evaluate the entire framework at once. To address that, run:
+
+```bash
+python benchmark_framework.py --iterations 1000 --output benchmark_results.csv
+```
+
+This times separate parts of the project:
+
+- schema creation and index creation
+- each CSV table load
+- SQL analytical queries
+- the pandas statistics module
+- the query plan check
+- foreign-key validation
+
+This is more useful for the current project size because it shows which parts of the framework are being measured and can be repeated later with API-loaded data.
+
 ---
 
 ## Database Tables
@@ -164,5 +187,6 @@ The project includes queries for:
 - player averages and scoring consistency
 - correlations between minutes, points, rebounds, assists, and turnovers
 - an SQLite query plan and repeated timing test for an indexed query
+- separate performance benchmarks for schema creation, data loading, SQL queries, statistics, query planning, and foreign-key validation
 
 The API importer now replaces the sample CSV files for teams, games, players, player-game statistics, and advanced metrics. The same performance test can be repeated with more API-loaded games to measure how the indexes behave as the tables grow.

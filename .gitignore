@@ -4,6 +4,7 @@ __pycache__/
 venv/
 nba_analytics.db
 nba_analytics_api.db
+benchmark_results.csv
 *.pyc
 .DS_Store
 Thumbs.db
