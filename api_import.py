@@ -155,7 +155,7 @@ def get_player_info(player_id):
     }
 
 
-def get_box_score_data(game_records, season):
+def get_box_score_data(game_records, season, fetch_player_details=False):
     players = {}
     stat_rows = []
     advanced_totals = defaultdict(lambda: {
@@ -175,7 +175,7 @@ def get_box_score_data(game_records, season):
         for _, row in traditional_rows.iterrows():
             player_id_value = row["personId"] if use_v3 else row["PLAYER_ID"]
             minutes_value = row["minutes"] if use_v3 else row["MIN"]
-            if pd.isna(player_id_value) or pd.isna(minutes_value):
+            if pd.isna(player_id_value) or not has_played_minutes(minutes_value):
                 continue
 
             player_id = int(player_id_value)
@@ -190,7 +190,14 @@ def get_box_score_data(game_records, season):
                 team_id = int(row["TEAM_ID"])
 
             if player_id not in players:
-                player_details = get_player_info(player_id)
+                if fetch_player_details:
+                    player_details = get_player_info(player_id)
+                else:
+                    player_details = {
+                        "position": row.get("position") if use_v3 else "Unknown",
+                        "height_inches": None,
+                        "weight_lbs": None,
+                    }
                 players[player_id] = {
                     "player_id": player_id,
                     "team_id": team_id,
@@ -257,6 +264,14 @@ def get_box_score_frames(game_id):
             if pd.notna(row["PLAYER_ID"])
         }
         return traditional.get_data_frames()[0], advanced_by_player, False
+
+
+def has_played_minutes(value):
+    if pd.isna(value):
+        return False
+
+    text = str(value).strip()
+    return text not in ("", "0", "0:00", "PT00M00.00S")
 
 
 def value_from_row(row, use_v3, v3_column, v2_column):
@@ -326,7 +341,13 @@ def build_advanced_frame(advanced_totals, season):
     return pd.DataFrame(rows)
 
 
-def load_api_data(connection, season, max_games, include_sample_injuries=False):
+def load_api_data(
+    connection,
+    season,
+    max_games,
+    include_sample_injuries=False,
+    fetch_player_details=False,
+):
     teams = get_team_dataframe()
     games = get_game_dataframe(season, max_games)
     if games.empty:
@@ -334,7 +355,11 @@ def load_api_data(connection, season, max_games, include_sample_injuries=False):
 
     game_records = games.to_dict("records")
     games_for_database = games.drop(columns=["api_game_id"])
-    players, stats, advanced_metrics = get_box_score_data(game_records, season)
+    players, stats, advanced_metrics = get_box_score_data(
+        game_records,
+        season,
+        fetch_player_details=fetch_player_details,
+    )
 
     counts = {
         "teams": insert_dataframe(connection, "teams", teams),
@@ -380,6 +405,11 @@ def main():
         action="store_true",
         help="Also load the local sample injury CSV file.",
     )
+    parser.add_argument(
+        "--fetch-player-details",
+        action="store_true",
+        help="Call CommonPlayerInfo for height and weight. This is slower.",
+    )
     args = parser.parse_args()
 
     connection = create_database(Path(args.database))
@@ -388,6 +418,7 @@ def main():
         season=args.season,
         max_games=args.max_games,
         include_sample_injuries=args.include_sample_injuries,
+        fetch_player_details=args.fetch_player_details,
     )
 
     print("NBA Analytics Database - API Import")

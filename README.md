@@ -38,6 +38,8 @@ The prototype includes:
 
 The main notebook creates the database, loads the CSV files, runs analytical queries, creates charts, calculates descriptive statistics and correlations, and records a query-performance baseline. The separate API importer can rebuild the database from NBA API calls.
 
+The latest API test loaded 10 real 2023-24 NBA games. After filtering out roster rows for players who did not log minutes, the database contained 30 teams, 10 games, 239 player records, 239 player-game stat records, and 239 advanced metric records.
+
 ---
 
 ## Requirements
@@ -122,7 +124,7 @@ This creates `nba_analytics.db`, loads the CSV data, and prints several reports.
 From the project folder, run:
 
 ```bash
-python api_import.py --season 2023-24 --max-games 5
+python api_import.py --season 2023-24 --max-games 10
 ```
 
 This creates the same SQLite database structure, but it fills the tables using NBA API calls. The script uses:
@@ -131,9 +133,12 @@ This creates the same SQLite database structure, but it fills the tables using N
 - `LeagueGameFinder` for game results
 - `BoxScoreTraditionalV3` for player box-score statistics
 - `BoxScoreAdvancedV3` for advanced player metrics
-- `CommonPlayerInfo` for player position, height, and weight
+
+For larger imports, the script uses box-score position data and leaves height and weight blank. If you want height and weight too, add `--fetch-player-details`, but this is slower because it calls an extra player profile endpoint for each player.
 
 The NBA API does not provide a simple official injury-report endpoint in this package, so injury data remains a local/manual CSV table for now.
+
+In the latest 10-game API test, the top scoring performance was GG Jackson with 44 points, followed by Payton Pritchard with 38 points.
 
 ### Option 3 - Run the Jupyter Notebook
 
@@ -177,6 +182,7 @@ The test suite checks the main database framework pieces:
 - the injury report filters available players
 - the points index is used for the top-scoring query
 - the individual framework benchmark returns the expected benchmark sections
+- API helper functions correctly convert NBA minute formats and filter non-playing rows
 
 Run the tests with:
 

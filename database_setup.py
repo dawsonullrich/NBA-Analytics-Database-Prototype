@@ -139,6 +139,7 @@ def run_reports(connection):
         JOIN players p ON m.player_id = p.player_id
         JOIN teams t ON p.team_id = t.team_id
         ORDER BY m.offensive_rating DESC
+        LIMIT 10
         """,
     )
 
