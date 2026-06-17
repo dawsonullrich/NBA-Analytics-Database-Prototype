@@ -1,4 +1,5 @@
 pandas>=1.5.0
 matplotlib>=3.6.0
+nba_api>=1.4.1
 jupyter>=1.0.0
 notebook>=6.5.0

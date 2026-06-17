@@ -1,8 +1,8 @@
 # NBA Analytics Database
 
-This project creates a small NBA analytics database using Python, SQLite, SQL, and pandas. The database stores information about NBA teams, players, games, player statistics, injuries, and advanced player metrics.
+This project creates a small NBA analytics database using Python, SQLite, SQL, pandas, and the `nba_api` package. The database stores information about NBA teams, players, games, player statistics, injuries, and advanced player metrics.
 
-The current version uses a small sample data set. It is meant to test the database design and queries before adding a larger amount of NBA data.
+The project can run in two ways. The CSV version uses a small sample data set so the project works offline. The API version calls NBA Stats endpoints through `nba_api` and loads live team, game, player, box-score, and advanced metric data into the same SQLite database.
 
 ---
 
@@ -31,7 +31,7 @@ The prototype includes:
 - injury reports
 - advanced player metrics
 
-The main notebook creates the database, loads the CSV files, runs analytical queries, creates charts, calculates descriptive statistics and correlations, and records a query-performance baseline.
+The main notebook creates the database, loads the CSV files, runs analytical queries, creates charts, calculates descriptive statistics and correlations, and records a query-performance baseline. The separate API importer can rebuild the database from NBA API calls.
 
 ---
 
@@ -48,6 +48,7 @@ You will need:
 |---|---|
 | `pandas` | Loading CSV files and displaying query results |
 | `matplotlib` | Creating charts |
+| `nba_api` | Pulling NBA Stats API data |
 | `sqlite3` | Creating and querying the database |
 | `jupyter` | Running the notebook |
 
@@ -85,6 +86,7 @@ NBA-Analytics-Database/
 |   |-- schema.sql
 |   `-- analytics_queries.sql
 |
+|-- api_import.py
 |-- database_setup.py
 |-- requirements.txt
 `-- README.md
@@ -94,7 +96,7 @@ NBA-Analytics-Database/
 
 ## How to Run
 
-### Option 1 - Run the Python Script
+### Option 1 - Run the Offline CSV Version
 
 From the project folder, run:
 
@@ -104,7 +106,25 @@ python database_setup.py
 
 This creates `nba_analytics.db`, loads the CSV data, and prints several reports.
 
-### Option 2 - Run the Jupyter Notebook
+### Option 2 - Run the NBA API Version
+
+From the project folder, run:
+
+```bash
+python api_import.py --season 2023-24 --max-games 5
+```
+
+This creates the same SQLite database structure, but it fills the tables using NBA API calls. The script uses:
+
+- `nba_api.stats.static.teams` for team data
+- `LeagueGameFinder` for game results
+- `BoxScoreTraditionalV3` for player box-score statistics
+- `BoxScoreAdvancedV3` for advanced player metrics
+- `CommonPlayerInfo` for player position, height, and weight
+
+The NBA API does not provide a simple official injury-report endpoint in this package, so injury data remains a local/manual CSV table for now.
+
+### Option 3 - Run the Jupyter Notebook
 
 Start Jupyter:
 
@@ -145,4 +165,4 @@ The project includes queries for:
 - correlations between minutes, points, rebounds, assists, and turnovers
 - an SQLite query plan and repeated timing test for an indexed query
 
-For the full project, the sample CSV files can be replaced with a larger data set from an NBA API or another NBA data source. The same performance test can then be repeated to measure how the indexes behave as the tables grow.
+The API importer now replaces the sample CSV files for teams, games, players, player-game statistics, and advanced metrics. The same performance test can be repeated with more API-loaded games to measure how the indexes behave as the tables grow.

@@ -1,5 +1,6 @@
 import csv
 import sqlite3
+import sys
 from pathlib import Path
 
 
@@ -76,7 +77,13 @@ def print_query(connection, title, query):
     print("-" * 80)
 
     for row in cursor.fetchall():
-        print(" | ".join(str(value) for value in row))
+        print(" | ".join(safe_output(value) for value in row))
+
+
+def safe_output(value):
+    text = str(value)
+    encoding = sys.stdout.encoding or "utf-8"
+    return text.encode(encoding, errors="replace").decode(encoding)
 
 
 def run_reports(connection):
